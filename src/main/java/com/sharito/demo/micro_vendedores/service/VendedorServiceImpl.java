@@ -23,6 +23,14 @@ public class VendedorServiceImpl implements VendedorService {
 		vendedorEntity.setNombres(vendedorDto.getNombres());
 		vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
 		vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
+		
+		if (this.vendedorRepository.existsByVendedor(vendedorDto.getCodigoVendedor())) {
+			vendedorRepository.save(vendedorEntity);
+
+		} else {
+			throw new IllegalArgumentException("ya existe alguien con este codigo de vendedor");
+		}
+
 		vendedorRepository.save(vendedorEntity);
 
 		return vendedorDto;

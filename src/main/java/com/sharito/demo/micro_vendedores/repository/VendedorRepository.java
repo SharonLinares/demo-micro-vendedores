@@ -7,5 +7,7 @@ import com.sharito.demo.micro_vendedores.entity.VendedorEntity;
 
 @Repository
 public interface VendedorRepository extends JpaRepository<VendedorEntity, Integer> {
+	
+	boolean  existsByVendedor(String codigoVendedor);
 
 }

@@ -1,5 +1,6 @@
 package com.sharito.demo.micro_vendedores.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,10 +14,13 @@ public class VendedorEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private String codigoVendedor;
+
 	private String nombres;
 	private String primerApellido;
 	private String segundoApellido;
+
+	@Column(nullable = false, unique = true)
+	private String codigoVendedor;
 
 	public Integer getId() {
 		return id;
@@ -24,14 +28,6 @@ public class VendedorEntity {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getCodigoVendedor() {
-		return codigoVendedor;
-	}
-
-	public void setCodigoVendedor(String codigoVendedor) {
-		this.codigoVendedor = codigoVendedor;
 	}
 
 	public String getNombres() {
@@ -56,6 +52,14 @@ public class VendedorEntity {
 
 	public void setSegundoApellido(String segundoApellido) {
 		this.segundoApellido = segundoApellido;
+	}
+
+	public String getCodigoVendedor() {
+		return codigoVendedor;
+	}
+
+	public void setCodigoVendedor(String codigoVendedor) {
+		this.codigoVendedor = codigoVendedor;
 	}
 
 }
