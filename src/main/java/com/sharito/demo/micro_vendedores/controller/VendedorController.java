@@ -30,8 +30,8 @@ public class VendedorController {
 	}
 
 	@PutMapping("/actualizar/{id}")
-	public ResponseEntity<VendedorDto> actualizar(@RequestBody VendedorDto vendedorDto, @PathVariable Integer id) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(vendedorService.actualizar(vendedorDto, id));
+	public ResponseEntity<VendedorDto> actualizar(@RequestBody VendedorDto vendedorDto, @PathVariable String codigoVendedor) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(vendedorService.actualizar(vendedorDto, codigoVendedor));
 	}
 
 	@GetMapping("/consultarvendedores")
