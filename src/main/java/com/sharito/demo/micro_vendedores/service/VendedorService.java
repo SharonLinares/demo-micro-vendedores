@@ -8,7 +8,7 @@ public interface VendedorService {
 
 	public VendedorDto crear(VendedorDto vendedorDto);
 
-	public VendedorDto actualizar(VendedorDto vendedorDto, Integer id);
+	public VendedorDto actualizar(VendedorDto vendedorDto, String codigoVendedor);
 
 	public List<VendedorDto> consultarVendedores();
 

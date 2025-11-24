@@ -23,28 +23,31 @@ public class VendedorServiceImpl implements VendedorService {
 		vendedorEntity.setNombres(vendedorDto.getNombres());
 		vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
 		vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
-		
-		if (this.vendedorRepository.existsByVendedor(vendedorDto.getCodigoVendedor())) {
-			vendedorRepository.save(vendedorEntity);
 
+		if (vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
+			throw new IllegalArgumentException("ya existe este codigo");
 		} else {
-			throw new IllegalArgumentException("ya existe alguien con este codigo de vendedor");
+			vendedorRepository.save(vendedorEntity);
 		}
-
-		vendedorRepository.save(vendedorEntity);
 
 		return vendedorDto;
 	}
 
 	@Override
-	public VendedorDto actualizar(VendedorDto vendedorDto, Integer id) {
-		VendedorEntity vendedorEntity = vendedorRepository.findById(id).orElse(null);
-		if (vendedorEntity != null) {
+	public VendedorDto actualizar(VendedorDto vendedorDto, String codigoVendedor) {
+		if (vendedorRepository.existsByCodigoVendedor(codigoVendedor)) {
+			if (!vendedorDto.getCodigoVendedor().equals(codigoVendedor)
+					&& vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
+				throw new IllegalArgumentException("ya existe esta matricula");
+			}
+			VendedorEntity vendedorEntity = vendedorRepository.findByCodigoVendedor(codigoVendedor);
 			vendedorEntity.setCodigoVendedor(vendedorDto.getCodigoVendedor());
 			vendedorEntity.setNombres(vendedorDto.getNombres());
 			vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
 			vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
 			vendedorRepository.save(vendedorEntity);
+		} else {
+			throw new IllegalArgumentException("NO existe este vendedor");
 		}
 
 		return vendedorDto;
@@ -52,16 +55,18 @@ public class VendedorServiceImpl implements VendedorService {
 
 	@Override
 	public List<VendedorDto> consultarVendedores() {
-		List<VendedorEntity> vendedoresEntity = vendedorRepository.findAll();
+		List<VendedorEntity> vendedorEntity = vendedorRepository.findAll();
 		List<VendedorDto> vendedoresDto = new ArrayList<>();
-		for (VendedorEntity vendedorEntity : vendedoresEntity) {
+		for (VendedorEntity vendedorEntity2 : vendedorEntity) {
 			VendedorDto vendedorDto = new VendedorDto();
-			vendedorDto.setCodigoVendedor(vendedorEntity.getCodigoVendedor());
-			vendedorDto.setNombres(vendedorEntity.getNombres());
-			vendedorDto.setPrimerApellido(vendedorEntity.getPrimerApellido());
-			vendedorDto.setSegundoApellido(vendedorEntity.getSegundoApellido());
+			vendedorDto.setCodigoVendedor(vendedorEntity2.getCodigoVendedor());
+			vendedorDto.setNombres(vendedorEntity2.getNombres());
+			vendedorDto.setPrimerApellido(vendedorEntity2.getPrimerApellido());
+			vendedorDto.setSegundoApellido(vendedorEntity2.getSegundoApellido());
 			vendedoresDto.add(vendedorDto);
+
 		}
+
 		return vendedoresDto;
 	}
 
