@@ -1,4 +1,4 @@
-package com.sharito.demo.micro_vendedores.service;
+package com.sharito.demo.micro_vendedores.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.sharito.demo.micro_vendedores.dto.VendedorDto;
 import com.sharito.demo.micro_vendedores.entity.VendedorEntity;
 import com.sharito.demo.micro_vendedores.repository.VendedorRepository;
+import com.sharito.demo.micro_vendedores.service.VendedorService;
 
 @Service
 public class VendedorServiceImpl implements VendedorService {
@@ -35,22 +36,27 @@ public class VendedorServiceImpl implements VendedorService {
 
 	@Override
 	public VendedorDto actualizar(VendedorDto vendedorDto, String codigoVendedor) {
+		validarMatricula(vendedorDto, codigoVendedor);
+		
+		VendedorEntity vendedorEntity = vendedorRepository.findByCodigoVendedor(codigoVendedor);
+		vendedorEntity.setCodigoVendedor(vendedorDto.getCodigoVendedor());
+		vendedorEntity.setNombres(vendedorDto.getNombres());
+		vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
+		vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
+		vendedorRepository.save(vendedorEntity);
+		return vendedorDto;
+	}
+
+	private void validarMatricula(VendedorDto vendedorDto, String codigoVendedor) {
 		if (vendedorRepository.existsByCodigoVendedor(codigoVendedor)) {
 			if (!vendedorDto.getCodigoVendedor().equals(codigoVendedor)
 					&& vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
 				throw new IllegalArgumentException("ya existe esta matricula");
 			}
-			VendedorEntity vendedorEntity = vendedorRepository.findByCodigoVendedor(codigoVendedor);
-			vendedorEntity.setCodigoVendedor(vendedorDto.getCodigoVendedor());
-			vendedorEntity.setNombres(vendedorDto.getNombres());
-			vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
-			vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
-			vendedorRepository.save(vendedorEntity);
+
 		} else {
 			throw new IllegalArgumentException("NO existe este vendedor");
 		}
-
-		return vendedorDto;
 	}
 
 	@Override
@@ -75,6 +81,11 @@ public class VendedorServiceImpl implements VendedorService {
 		if (vendedorRepository.existsById(id)) {
 			vendedorRepository.deleteById(id);
 		}
+	}
+	
+	@Override
+	public boolean existsByCodigoVendedor(String codigoVendedor) {
+		return vendedorRepository.existsByCodigoVendedor(codigoVendedor);
 	}
 
 }

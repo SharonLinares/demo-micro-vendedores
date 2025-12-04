@@ -11,6 +11,8 @@ public interface VendedorService {
 	public VendedorDto actualizar(VendedorDto vendedorDto, String codigoVendedor);
 
 	public List<VendedorDto> consultarVendedores();
+	
+	boolean existsByCodigoVendedor(String codigoVendedor);
 
 	public void eliminar(Integer id);
 

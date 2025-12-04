@@ -44,4 +44,9 @@ public class VendedorController {
 		vendedorService.eliminar(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	@GetMapping("/existe/{codigoVendedor}")
+	public ResponseEntity<Boolean> existsByCodigoVendedor(@PathVariable String codigoVendedor) {
+		return ResponseEntity.ok(vendedorService.existsByCodigoVendedor(codigoVendedor));
+	}
 }
