@@ -19,70 +19,82 @@ public class VendedorServiceImpl implements VendedorService {
 
 	@Override
 	public VendedorDto crear(VendedorDto vendedorDto) {
+		if (!vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
+			throw new IllegalArgumentException("ya existe este codigo");
+		}
+
+		VendedorEntity vendedor = dtoToEntity(vendedorDto);
+		vendedorRepository.save(vendedor);
+
+		return entityToDto(vendedor);
+	}
+
+	@Override
+	public VendedorDto actualizar(VendedorDto vendedorDto, String codigoVendedor) {
+		validarVendedor(vendedorDto, codigoVendedor);
+
+		VendedorEntity vendedor = dtoToEntity(vendedorDto);
+		vendedorRepository.save(vendedor);
+
+		return entityToDto(vendedor);
+	}
+
+	private void validarVendedor(VendedorDto vendedorDto, String codigoVendedor) {
+
+		if (!vendedorRepository.existsByCodigoVendedor(codigoVendedor)) {
+			throw new IllegalArgumentException("NO existe este vendedor");
+		}
+
+		if (!vendedorDto.getCodigoVendedor().equals(codigoVendedor)) {
+
+			if (vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
+				throw new IllegalArgumentException("ya existe alguien con ese codigo de vendedor");
+			}
+		}
+	}
+
+	@Override
+	public List<VendedorDto> consultarVendedores() {
+		List<VendedorEntity> entities = vendedorRepository.findAll();
+		List<VendedorDto> dtos = new ArrayList<>();
+		for (VendedorEntity vendedorEntity : entities) {
+			VendedorDto vendedor = entityToDto(vendedorEntity);
+			dtos.add(vendedor);
+		}
+
+		return dtos;
+	}
+
+	public VendedorDto entityToDto(VendedorEntity vendedorEntity) {
+		VendedorDto vendedorDto = new VendedorDto();
+		vendedorDto.setCodigoVendedor(vendedorEntity.getCodigoVendedor());
+		vendedorDto.setNombres(vendedorEntity.getNombres());
+		vendedorDto.setPrimerApellido(vendedorEntity.getPrimerApellido());
+		vendedorDto.setSegundoApellido(vendedorEntity.getSegundoApellido());
+
+		return vendedorDto;
+	}
+
+	public VendedorEntity dtoToEntity(VendedorDto vendedorDto) {
 		VendedorEntity vendedorEntity = new VendedorEntity();
 		vendedorEntity.setCodigoVendedor(vendedorDto.getCodigoVendedor());
 		vendedorEntity.setNombres(vendedorDto.getNombres());
 		vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
 		vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
 
-		if (vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
-			throw new IllegalArgumentException("ya existe este codigo");
-		} else {
-			vendedorRepository.save(vendedorEntity);
-		}
-
-		return vendedorDto;
-	}
-
-	@Override
-	public VendedorDto actualizar(VendedorDto vendedorDto, String codigoVendedor) {
-		validarMatricula(vendedorDto, codigoVendedor);
-		
-		VendedorEntity vendedorEntity = vendedorRepository.findByCodigoVendedor(codigoVendedor);
-		vendedorEntity.setCodigoVendedor(vendedorDto.getCodigoVendedor());
-		vendedorEntity.setNombres(vendedorDto.getNombres());
-		vendedorEntity.setPrimerApellido(vendedorDto.getPrimerApellido());
-		vendedorEntity.setSegundoApellido(vendedorDto.getSegundoApellido());
-		vendedorRepository.save(vendedorEntity);
-		return vendedorDto;
-	}
-
-	private void validarMatricula(VendedorDto vendedorDto, String codigoVendedor) {
-		if (vendedorRepository.existsByCodigoVendedor(codigoVendedor)) {
-			if (!vendedorDto.getCodigoVendedor().equals(codigoVendedor)
-					&& vendedorRepository.existsByCodigoVendedor(vendedorDto.getCodigoVendedor())) {
-				throw new IllegalArgumentException("ya existe esta matricula");
-			}
-
-		} else {
-			throw new IllegalArgumentException("NO existe este vendedor");
-		}
-	}
-
-	@Override
-	public List<VendedorDto> consultarVendedores() {
-		List<VendedorEntity> vendedorEntity = vendedorRepository.findAll();
-		List<VendedorDto> vendedoresDto = new ArrayList<>();
-		for (VendedorEntity vendedorEntity2 : vendedorEntity) {
-			VendedorDto vendedorDto = new VendedorDto();
-			vendedorDto.setCodigoVendedor(vendedorEntity2.getCodigoVendedor());
-			vendedorDto.setNombres(vendedorEntity2.getNombres());
-			vendedorDto.setPrimerApellido(vendedorEntity2.getPrimerApellido());
-			vendedorDto.setSegundoApellido(vendedorEntity2.getSegundoApellido());
-			vendedoresDto.add(vendedorDto);
-
-		}
-
-		return vendedoresDto;
+		return vendedorEntity;
 	}
 
 	@Override
 	public void eliminar(Integer id) {
-		if (vendedorRepository.existsById(id)) {
-			vendedorRepository.deleteById(id);
+		if (!vendedorRepository.existsById(id)) {
+			throw new IllegalArgumentException("NO Existe este id");
+
 		}
+
+		vendedorRepository.deleteById(id);
 	}
-	
+
 	@Override
 	public boolean existsByCodigoVendedor(String codigoVendedor) {
 		return vendedorRepository.existsByCodigoVendedor(codigoVendedor);
